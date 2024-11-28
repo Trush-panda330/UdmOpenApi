@@ -43,5 +43,7 @@ task buildSpringServer(type: org.openapitools.generator.gradle.plugin.tasks.Gene
 	configOptions = [
 	        interfaceOnly: "true"
 	]
-
 }
+
+compileJava.dependsOn tasks.buildSpringServer
+sourceSets.main.java.srcDir "$buildDir/spring/src/main/java"
