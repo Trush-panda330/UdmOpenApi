@@ -22,6 +22,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	compileOnly 'io.swagger:swagger-annotations:1.6.5'
 }
 
 tasks.named('test') {
@@ -47,3 +49,4 @@ task buildSpringServer(type: org.openapitools.generator.gradle.plugin.tasks.Gene
 
 compileJava.dependsOn tasks.buildSpringServer
 sourceSets.main.java.srcDir "$buildDir/spring/src/main/java"
+
