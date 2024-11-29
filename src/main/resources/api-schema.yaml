@@ -20,6 +20,16 @@ paths:
       get:
         tags:
             - tasks
+        operationId: showTask
         responses:
           '200':
             description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/TaskDTO"
+components:
+  schemas:
+    TaskDTO:
+      type: object
+
