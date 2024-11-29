@@ -1,0 +1,1 @@
+insert into samples(content) values ('Hello, world!!');
