@@ -16,6 +16,21 @@ paths:
         responses:
           '200':
             description: OK
+    /tasks/:
+      post:
+        summary: "タスク作成"
+        description: "タスクを新規作成します"
+        operationId: "createTask"
+        tags:
+          - tasks
+        responses:
+          201:
+            description: "Created"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/TaskDTO"
+
     /tasks/{taskId}:
       get:
         summary: "タスク取得"
@@ -73,3 +88,4 @@ components:
       required:
         - title
         - detail
+
