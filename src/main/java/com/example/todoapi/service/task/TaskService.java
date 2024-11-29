@@ -1,11 +1,18 @@
 package com.example.todoapi.service.task;
 
+import com.example.todoapi.repository.task.TaskRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TaskService {
 
-    public TaskEntity find(){
-        return new TaskEntity(2,"from service");
+    private final TaskRepository taskRepository;
+
+    public TaskEntity find(Long taskId){
+        return taskRepository.select(taskId)
+                .map(record -> new TaskEntity(record.getId(),record.getTitle()))
+                .orElseThrow(() -> new IllegalStateException("TODO")); //TODO
     }
 }
