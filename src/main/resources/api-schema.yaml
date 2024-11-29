@@ -18,6 +18,8 @@ paths:
             description: OK
     /tasks/{taskId}:
       get:
+        summary: "タスク取得"
+        description: "指定されたIDのタスクを一件取得します"
         tags:
             - tasks
         operationId: showTask
