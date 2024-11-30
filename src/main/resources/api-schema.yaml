@@ -16,7 +16,7 @@ paths:
         responses:
           '200':
             description: OK
-    /tasks/:
+    /tasks:
       get:
         summary: "タスク一覧取得"
         description: "タスクの一覧を取得できます"
