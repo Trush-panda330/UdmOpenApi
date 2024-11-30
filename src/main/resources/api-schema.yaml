@@ -16,7 +16,7 @@ paths:
         responses:
           '200':
             description: OK
-
+#タスク一覧取得のスキーマ
     /tasks:
       get:
         summary: "タスク一覧取得"
@@ -24,6 +24,26 @@ paths:
         operationId: "listTasks"
         tags:
           - tasks
+        parameters:
+          - name: limit
+            in: query
+            required: true
+            description: "リストに含まれるリソースの最大値"
+            schema:
+              type: integer
+              format: int32
+              minimum: 1
+              maximum: 100
+              default: 10
+          - name: offset
+            in: query
+            required: true
+            description: "オフセット"
+            schema:
+              type: integer
+              format: int64
+              minimum: 0
+              default: 0
         responses:
           '200':
             description: "OK"
@@ -31,37 +51,59 @@ paths:
               application/json:
                 schema:
                   $ref: "#/components/schemas/TaskListDTO"
-      post:
-        summary: "タスク作成"
-        description: "タスクを新規作成します"
-        operationId: "createTask"
-        tags:
-          - tasks
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TaskForm"
-        responses:
-          201:
-            description: "Created"
-            headers:
-              location:
-                description: "作成されたリソースのURI"
-                schema:
-                  type: string
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/TaskDTO"
-          400:
+          '400':
             description: "Bad Request"
             content:
               application/json:
                 schema:
                   $ref: "#/components/schemas/BadRequestError"
 
+      # タスクを作成する際のエンドポイント
+      post:
+        # エンドポイントの概要
+        summary: "タスク作成"
+        description: "タスクを新規作成します"# エンドポイントの詳細な説明
+        operationId: "createTask"# 操作を一意に識別するID
+        # このエンドポイントに関連付けられるタグ（カテゴリ）
+        tags:
+          - tasks
+        # リクエストボディに関する設定
+        requestBody:
+          # このエンドポイントではリクエストボディが必須である
+          required: true
+          content:
+            # JSON形式のリクエストを受け付ける
+            application/json:
+              schema:
+                # リクエストボディで使用するスキーマを指定
+                $ref: "#/components/schemas/TaskForm"
+        # レスポンスに関する設定
+        responses:
+          # HTTPステータスコード201（作成成功）
+          201:
+            # ステータスコード201の説明
+            description: "Created"
+            # レスポンスヘッダーの定義
+            headers:
+              location:
+                # ヘッダー"location"の説明
+                description: "作成されたリソースのURI"
+                schema:
+                  type: string
+            # レスポンスボディの形式とスキーマ
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/TaskDTO"
+          # HTTPステータスコード400（リクエストエラー）
+          400:
+            # ステータスコード400の説明
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  # エラー情報を表すスキーマを参照
+                  $ref: "#/components/schemas/BadRequestError"
 
 
     /tasks/{taskId}:
@@ -92,6 +134,7 @@ paths:
               application/json:
                 schema:
                   $ref: "#/components/schemas/ResourceNotFoundError"
+#======================= components ======================
 components:
   schemas:
     TaskForm:
@@ -117,10 +160,32 @@ components:
       required:
         - id
         - title
+    PageDTO:
+      description: "ページング情報"
+      type: object
+      properties:
+        limit:
+          description: "リクエストされた limit"
+          type: integer
+          format: int32
+        offset:
+          description: "リクエストされた offset"
+          type: integer
+          format: int64
+        size:
+          description: "取得できた件数"
+          type: integer
+          format: int32
+      required:
+        - limit
+        - offset
+        - size
     TaskListDTO:
       description: "タスクのリスト"
       type: object
       properties:
+        page:
+          $ref: "#/components/schemas/PageDTO"
         results:
           type: array
           items:
