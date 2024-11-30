@@ -5,6 +5,8 @@ import com.example.todoapi.repository.task.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -23,5 +25,9 @@ public class TaskService {
         taskRepository.insert(record);
 
         return new TaskEntity(record.getId(), record.getTitle());
+    }
+
+    public List<TaskEntity> find() {
+        return List.of(new TaskEntity(1L, "title_2"), new TaskEntity(2L,"title_2"));
     }
 }
