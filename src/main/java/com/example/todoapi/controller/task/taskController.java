@@ -2,6 +2,7 @@ package com.example.todoapi.controller.task;
 
 
 import com.example.todoapi.controller.TasksApi;
+import com.example.todoapi.model.PageDTO;
 import com.example.todoapi.model.TaskDTO;
 import com.example.todoapi.model.TaskForm;
 import com.example.todoapi.model.TaskListDTO;
@@ -38,9 +39,7 @@ public class taskController implements TasksApi {
     public ResponseEntity<TaskDTO> showTask(Long taskId) {
         var entity = taskService.find(taskId);
 
-        var dto = new TaskDTO();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
+        var dto = toTaskDTO(entity);
         return ResponseEntity.ok(dto);
     }
 
@@ -59,11 +58,7 @@ public class taskController implements TasksApi {
     public ResponseEntity<TaskDTO> createTask(TaskForm form) {
         // taskService.create()でタイトルをformに含まれるタイトルを持ったエンティティを作成
         var entity = taskService.create(form.getTitle());
-
-        //dtoにentityのidとtitleをセットする
-        var dto = new TaskDTO();
-        dto.setId(entity.getId());
-        dto.setTitle(entity.getTitle());
+        var dto = toTaskDTO(entity);
         //ResponseBodyにdtoを入れて返す。
         return ResponseEntity
                 //created()を使うと引数に渡したものがlocationに出てくる
@@ -73,17 +68,19 @@ public class taskController implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<TaskListDTO> listTasks() {
-        //taskServiceからentityListをとってくる
-        var entityList = taskService.find();
-        //StreamでDTOListに変換する
-        List<TaskDTO> dtoList;
-        dtoList = entityList.stream()
+    public ResponseEntity<TaskListDTO> listTasks(Integer limit, Long offset) {
+        var entityList = taskService.find(limit, offset);
+        var dtoList = entityList.stream()
                 .map(taskController::toTaskDTO)
                 .collect(Collectors.toList());
-        //TaskListDTOをインスタンス化
+
+        var pageDTO = new PageDTO();
+        pageDTO.setLimit(limit);
+        pageDTO.setOffset(offset);
+        pageDTO.setSize(dtoList.size());
+
         var dto = new TaskListDTO();
-        //dtoにstreamで作ったdtoListを渡す。
+        dto.setPage(pageDTO);
         dto.setResults(dtoList);
 
         return ResponseEntity.ok(dto);
