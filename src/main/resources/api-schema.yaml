@@ -134,6 +134,29 @@ paths:
               application/json:
                 schema:
                   $ref: "#/components/schemas/ResourceNotFoundError"
+      #put /task タスクを更新するエンドポイント
+      put:
+        summary: "タスク更新"
+        description: "指定されたタスクをリクエストボディの内容で上書きします"
+        operationId: "editTask"
+        tags:
+          - tasks
+        parameters:
+          - name: taskId
+            in: path
+            required: true
+            description: "更新するタスクのID"
+            schema:
+              type: integer
+              format: int64
+              minimum: 1
+        responses:
+          '200':
+            description: "OK"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/TaskDTO"
 #======================= components ======================
 components:
   schemas:
