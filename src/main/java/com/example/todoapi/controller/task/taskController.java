@@ -4,18 +4,22 @@ package com.example.todoapi.controller.task;
 import com.example.todoapi.controller.TasksApi;
 import com.example.todoapi.model.TaskDTO;
 import com.example.todoapi.model.TaskForm;
+import com.example.todoapi.model.TaskListDTO;
+import com.example.todoapi.service.task.TaskEntity;
 import com.example.todoapi.service.task.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * タスク管理APIのコントローラークラスです。
  * <p>
- *    このクラスは{@link TasksApi｝ インターフェースを実装し、
- *    タスクの取得や作成を担当するエンドポイントを提供します。
+ * このクラスは{@link TasksApi｝ インターフェースを実装し、
+ * タスクの取得や作成を担当するエンドポイントを提供します。
  * </p>
  */
 @RestController
@@ -44,9 +48,10 @@ public class taskController implements TasksApi {
     /**
      * 新しいタスクを作成するエンドポイント。
      * <p>
-     *     リクエストから渡された{@link TaskForm}に基づきタスクを作成し、
-     *     作成されたタスクの情報をレスポンスとして返します。
+     * リクエストから渡された{@link TaskForm}に基づきタスクを作成し、
+     * 作成されたタスクの情報をレスポンスとして返します。
      * </p>
+     *
      * @param form 作成するタスクのデータを含む{@link TaskForm}
      * @return 作成されたタスクの詳細を含む {@link TaskDTO}を格納した{@link ResponseEntity}
      */
@@ -68,7 +73,26 @@ public class taskController implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<Void> listTasks() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TaskListDTO> listTasks() {
+        //taskServiceからentityListをとってくる
+        var entityList = taskService.find();
+        //StreamでDTOListに変換する
+        List<TaskDTO> dtoList;
+        dtoList = entityList.stream()
+                .map(taskController::toTaskDTO)
+                .collect(Collectors.toList());
+        //TaskListDTOをインスタンス化
+        var dto = new TaskListDTO();
+        //dtoにstreamで作ったdtoListを渡す。
+        dto.setResults(dtoList);
+
+        return ResponseEntity.ok(dto);
+    }
+
+    private static TaskDTO toTaskDTO(TaskEntity taskEntity) {
+        var taskDTO = new TaskDTO();
+        taskDTO.setId(taskEntity.getId());
+        taskDTO.setTitle(taskEntity.getTitle());
+        return taskDTO;
     }
 }
