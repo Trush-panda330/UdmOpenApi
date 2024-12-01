@@ -37,4 +37,15 @@ public class TaskService {
         return new TaskEntity(record.getId(), record.getTitle());
     }
 
+    public TaskEntity update(Long taskId, String title) {
+        /*この↓2行がないとリソースがない時にreturn文のところまで行ってfind()の中でExceptionがスローされる。
+        ➡ update()の後に例外が投げられてしまう。リソースがない時にupdate()が実行しようとされるのはおかしいので
+        （実際には実行できないので文が発行されるだけ）
+        先にselect()でそのidにリソースがあるか確認してしまう。
+        * */
+        taskRepository.select(taskId)
+                        .orElseThrow(() -> new TaskEntityNotFoundException(taskId));
+        taskRepository.update(new TaskRecord(taskId, title));
+        return find(taskId);
+    }
 }
